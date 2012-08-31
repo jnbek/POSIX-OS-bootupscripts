@@ -1,0 +1,6 @@
+This is a collection of rc.d/ init.d script templates to make daemonizing processes easier. 
+Currently Available For:
+
+FreeBSD
+Arch Linux
+Generic init.d based Linux

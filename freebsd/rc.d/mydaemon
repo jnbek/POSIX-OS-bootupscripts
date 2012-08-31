@@ -1,0 +1,46 @@
+#!/bin/sh
+# 
+# $FreeBSD: ports/graphics/mydaemon/files/mydaemon.in,v 1.4 2012/01/14 08:55:46 dougb Exp $
+#
+# PROVIDE: mydaemon
+# REQUIRE: NETWORKING
+#
+# Add the following line to /etc/rc.conf[.local] to enable mydaemon
+#
+# mydaemon_enable (bool):  Set to "NO" by default.
+#               Set it to "YES" to enable mydaemon.
+# See http://www.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8 and
+# http://www.freebsd.org/doc/en_US.ISO8859-1/articles/rc-scripting/index.html
+
+. /etc/rc.subr
+
+name="mydaemon"
+rcvar=mydaemon_enable
+
+load_rc_config ${name}
+
+: ${mydaemon_enable="NO"}
+: ${mydaemon_user="root"}
+: ${mydaemon_chdir="/usr/local/mydaemon"}
+: ${mydaemon_pidfile="/var/run/mydaemon.pid"}
+: ${mydaemon_stdout_log="/var/log/mydaemon_output.log"}
+: ${mydaemon_stderr_log="/var/log/mydaemon_error.log"}
+
+lang_args="cmd_line_args_go_here"
+# Logging Args, If supported
+log_args=">> ${mydaemon_stdout_log} 2>> ${mydaemon_stderr_log}"
+
+pidfile=${mydaemon_pidfile}
+command="/usr/sbin/daemon"
+command_args="-p ${pidfile} /path/to/executable/here ${lang_args} ${mydaemon_flags} ${log_args}"
+procname="/path/to/executable"
+
+start_precmd=logs_touch
+
+logs_touch()
+{
+    touch $mydaemon_stdout_log $mydaemon_stderr_log
+    chown $mydaemon_user $mydaemon_stdout_log $mydaemon_stderr_log
+}
+
+run_rc_command "$1"
